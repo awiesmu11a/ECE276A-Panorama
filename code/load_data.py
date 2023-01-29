@@ -36,6 +36,26 @@ import numpy as np
 import transforms3d
 
 vicon = vicd['rots']
+imu = imud['vals']
+
+bias_acc = 0
+scale_factor_acc = (3300 / (1023 * 300)) * (3.14159265 / 180)
+acc = []
+
+bias_omega = 0
+scale_factor_gyro = (3300 / (1023 * 190.8)) * (3.14159265 / 180)
+omega = []
+
+
+for i in range(len(imu[0])):
+  acc.append([(imu[0][i] - bias_acc), (imu[1][i] - bias_acc), (imu[2][i] - bias_acc)])
+  acc[-1][0] = acc[-1][0] * scale_factor_acc
+  acc[-1][1] = acc[-1][1] * scale_factor_acc
+  acc[-1][2] = acc[-1][2] * scale_factor_acc  
+  omega.append([(imu[3][i] - bias_acc), (imu[4][i] - bias_acc), (imu[5][i] - bias_acc)])
+  omega[-1][0] = omega[-1][0] * scale_factor_gyro
+  omega[-1][1] = omega[-1][1] * scale_factor_gyro
+  omega[-1][2] = omega[-1][2] * scale_factor_gyro
 
 orientation = []
 
@@ -47,5 +67,7 @@ for i in range(len(vicon[0][0])):
   orientation.append(list(euler))
 
 orientation = np.array(orientation)
-plt.plot(orientation[:,0])
+acc = np.array(acc)
+omega = np.array(omega)
+plt.plot(acc[:,2])
 plt.show()
